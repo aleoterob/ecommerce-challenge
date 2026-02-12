@@ -1,0 +1,92 @@
+services:
+  - type: web
+    name: ecommerce-api-gateway
+    runtime: node
+    rootDir: microservices/api-gateway
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /products
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: PORT
+        value: 10000
+      - key: CORS_ORIGIN
+        value: https://ecommerce-frontend.onrender.com
+      - key: RABBITMQ_URL
+        sync: false
+      - key: AUTH_QUEUE
+        value: auth_queue
+      - key: CATALOG_QUEUE
+        value: catalog_queue
+      - key: INVENTORY_QUEUE
+        value: inventory_queue
+
+  - type: worker
+    name: ecommerce-auth-service
+    runtime: node
+    rootDir: microservices/auth-service
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: RABBITMQ_URL
+        sync: false
+      - key: AUTH_QUEUE
+        value: auth_queue
+      - key: JWT_SECRET
+        sync: false
+      - key: AUTH_DATABASE_URL
+        sync: false
+
+  - type: worker
+    name: ecommerce-catalog-service
+    runtime: node
+    rootDir: microservices/catalog-service
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: RABBITMQ_URL
+        sync: false
+      - key: CATALOG_QUEUE
+        value: catalog_queue
+      - key: INVENTORY_QUEUE
+        value: inventory_queue
+      - key: CATALOG_DATABASE_URL
+        sync: false
+
+  - type: worker
+    name: ecommerce-inventory-service
+    runtime: node
+    rootDir: microservices/inventory-service
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: RABBITMQ_URL
+        sync: false
+      - key: INVENTORY_QUEUE
+        value: inventory_queue
+      - key: CATALOG_QUEUE
+        value: catalog_queue
+      - key: INVENTORY_DATABASE_URL
+        sync: false
+
+  - type: static_site
+    name: ecommerce-frontend
+    rootDir: react-ecommerce
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: VITE_API_URL
+        value: https://ecommerce-api-gateway.onrender.com
