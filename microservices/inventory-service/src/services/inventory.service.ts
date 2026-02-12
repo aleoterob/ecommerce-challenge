@@ -4,7 +4,10 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Repository } from 'typeorm';
 import { firstValueFrom } from 'rxjs';
 import { InventoryItem } from '../entities/inventory-item.entity';
-import { CATALOG_EVENTS_CLIENT, INVENTORY_UPDATED_EVENT } from '../messaging/rmq.constants';
+import {
+  CATALOG_EVENTS_CLIENT,
+  INVENTORY_UPDATED_EVENT,
+} from '../messaging/rmq.constants';
 
 @Injectable()
 export class InventoryService {

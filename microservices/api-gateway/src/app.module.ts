@@ -46,7 +46,15 @@ import { InventoryGatewayService } from './services/inventory-gateway.service';
       },
     ]),
   ],
-  controllers: [AuthHttpController, CatalogHttpController, InventoryHttpController],
-  providers: [AuthGatewayService, CatalogGatewayService, InventoryGatewayService],
+  controllers: [
+    AuthHttpController,
+    CatalogHttpController,
+    InventoryHttpController,
+  ],
+  providers: [
+    AuthGatewayService,
+    CatalogGatewayService,
+    InventoryGatewayService,
+  ],
 })
 export class AppModule {}

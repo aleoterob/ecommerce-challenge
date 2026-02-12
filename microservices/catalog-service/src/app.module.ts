@@ -14,8 +14,9 @@ import { INVENTORY_EVENTS_CLIENT } from './messaging/rmq.constants';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        url: configService.get<string>('CATALOG_DATABASE_URL')
-          ?? configService.get<string>('DATABASE_URL'),
+        url:
+          configService.get<string>('CATALOG_DATABASE_URL') ??
+          configService.get<string>('DATABASE_URL'),
         entities: [Product],
         synchronize: true,
       }),

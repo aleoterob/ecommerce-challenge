@@ -74,8 +74,7 @@ export class CatalogService {
     if (payload.title !== undefined) product.title = payload.title;
     if (payload.description !== undefined)
       product.description = payload.description || null;
-    if (payload.price !== undefined)
-      product.price = payload.price.toFixed(2);
+    if (payload.price !== undefined) product.price = payload.price.toFixed(2);
     if (payload.isActive !== undefined) product.isActive = payload.isActive;
     return this.productsRepository.save(product);
   }

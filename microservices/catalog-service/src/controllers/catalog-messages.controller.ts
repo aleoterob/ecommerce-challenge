@@ -66,11 +66,14 @@ export class CatalogMessagesController {
     @Ctx() context: RmqContext,
   ): Promise<void> {
     this.ack(context);
-    await this.catalogService.applyInventoryUpdate(payload.productId, payload.quantity);
+    await this.catalogService.applyInventoryUpdate(
+      payload.productId,
+      payload.quantity,
+    );
   }
 
   private ack(context: RmqContext): void {
-    const channel = context.getChannelRef();
+    const channel = context.getChannelRef() as { ack: (msg: unknown) => void };
     const originalMessage = context.getMessage();
     channel.ack(originalMessage);
   }

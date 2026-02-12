@@ -32,6 +32,7 @@ describe('AppController (e2e)', () => {
   });
 
   it('/health (GET)', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- supertest accepts http.Server
     return request(app.getHttpServer())
       .get('/health')
       .expect(200)

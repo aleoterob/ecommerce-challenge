@@ -14,8 +14,9 @@ import { InventoryService } from './services/inventory.service';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        url: configService.get<string>('INVENTORY_DATABASE_URL')
-          ?? configService.get<string>('DATABASE_URL'),
+        url:
+          configService.get<string>('INVENTORY_DATABASE_URL') ??
+          configService.get<string>('DATABASE_URL'),
         entities: [InventoryItem],
         synchronize: true,
       }),

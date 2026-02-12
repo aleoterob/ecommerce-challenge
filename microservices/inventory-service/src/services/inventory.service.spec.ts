@@ -14,7 +14,9 @@ describe('InventoryService', () => {
       quantity: 4,
     } as InventoryItem);
     const upsert = jest.fn().mockResolvedValue(undefined);
-    const save = jest.fn().mockImplementation(async (item: InventoryItem) => item);
+    const save = jest
+      .fn()
+      .mockImplementation(async (item: InventoryItem) => item);
 
     const moduleRef = await Test.createTestingModule({
       providers: [

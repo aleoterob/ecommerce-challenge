@@ -1,12 +1,11 @@
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { CreateProductDto, ProductDto, UpdateProductDto } from '../dto/catalog.dto';
+import {
+  CreateProductDto,
+  ProductDto,
+  UpdateProductDto,
+} from '../dto/catalog.dto';
 import {
   CATALOG_CREATE_PRODUCT_PATTERN,
   CATALOG_DELETE_PRODUCT_PATTERN,
@@ -23,7 +22,9 @@ export class CatalogGatewayService {
   ) {}
 
   async listProducts(): Promise<ProductDto[]> {
-    return firstValueFrom(this.catalogClient.send(CATALOG_LIST_PRODUCTS_PATTERN, {}));
+    return firstValueFrom(
+      this.catalogClient.send(CATALOG_LIST_PRODUCTS_PATTERN, {}),
+    );
   }
 
   async getProduct(productId: string): Promise<ProductDto> {

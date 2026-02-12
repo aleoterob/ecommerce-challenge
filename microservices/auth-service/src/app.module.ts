@@ -14,8 +14,9 @@ import { UsersService } from './services/users.service';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        url: configService.get<string>('AUTH_DATABASE_URL')
-          ?? configService.get<string>('DATABASE_URL'),
+        url:
+          configService.get<string>('AUTH_DATABASE_URL') ??
+          configService.get<string>('DATABASE_URL'),
         entities: [User],
         synchronize: true,
       }),

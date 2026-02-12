@@ -1,5 +1,10 @@
 import { Controller, UsePipes, ValidationPipe } from '@nestjs/common';
-import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
+import {
+  Ctx,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 import { LoginUserDto, RegisterUserDto } from '../dto/auth.dto';
 import { AuthService } from '../services/auth.service';
 
