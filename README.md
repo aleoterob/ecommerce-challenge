@@ -13,17 +13,17 @@ Principales hallazgos en `nestjs-ecommerce`:
 
 - tests de controladores acoplados a modulos de DB y autenticacion
 - e2e con problemas de cleanup (`app.close` sin ejecutar correctamente)
-- dependencias fragiles en repositorios/mocks para e2e
-- guard/auth y configuraciones con acoplamientos que dificultaban evolucion
+- e2e con dependencias fragiles en tokens de repositorio hardcodeados
+- guard/auth consumiendo `process.env` directamente con comportamiento fragil
+- modulo de productos fuertemente acoplado a `EntityManager`, dificultando evolucion de dominio
 - base monolitica poco preparada para desacople asincronico entre catalogo e inventario
 
-Correcciones minimas aplicadas:
+Correcciones aplicadas:
 
-- aislamiento de tests unitarios de controladores
-- estabilizacion de e2e con mocks y teardown correcto
+- aislamiento de tests unitarios de controladores (desacoplados de DB)
+- estabilizacion de e2e con `getRepositoryToken(User)` y cleanup async correcto
+- teardown corregido con `await app.close()`
 - saneamiento basico para tener baseline reproducible antes de evolucionar
-
-Detalle tecnico ampliado: `microservices/CHALLENGE_NOTES.md`.
 
 ## 2) Eventos implementados y por que
 
@@ -40,6 +40,13 @@ Se implementaron dos eventos de dominio relevantes:
    - objetivo: actualizar `lastKnownStock` como read model para consultas del catalogo
 
 Con esto se evita comunicacion sincrona innecesaria entre modulos y se valida consistencia eventual.
+
+Racional del diseno:
+
+- Emision de eventos en limites naturales del dominio
+- Ninguna invocacion sincrona directa entre modulos para sincronizar stock
+- Separacion clara entre write model (inventario) y read model (catalogo con `lastKnownStock`)
+- Frontend puede validar consistencia eventual refrescando la lista tras actualizaciones de stock
 
 ## 3) Decisiones tecnicas relevantes
 
@@ -109,12 +116,12 @@ El API Gateway envia solicitudes (RPC) a los microservicios via RabbitMQ. Los ev
 
 **Estructura backend por servicio:**
 
-| Servicio | Controllers | Services | DTOs | Entities |
-|----------|-------------|----------|------|----------|
-| **api-gateway** | `CatalogHttpController`, `AuthHttpController`, `InventoryHttpController` | `CatalogGatewayService`, `AuthGatewayService`, `InventoryGatewayService` | `catalog.dto`, `auth.dto`, `inventory.dto` | — |
-| **catalog-service** | `CatalogMessagesController` | `CatalogService` | `catalog.dto` | `Product` |
-| **inventory-service** | `InventoryMessagesController` | `InventoryService` | `inventory.dto` | `InventoryItem` |
-| **auth-service** | `AuthMessagesController` | `AuthService`, `UsersService` | `auth.dto` | `User` |
+| Servicio              | Controllers                                                              | Services                                                                 | DTOs                                       | Entities        |
+| --------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------ | --------------- |
+| **api-gateway**       | `CatalogHttpController`, `AuthHttpController`, `InventoryHttpController` | `CatalogGatewayService`, `AuthGatewayService`, `InventoryGatewayService` | `catalog.dto`, `auth.dto`, `inventory.dto` | —               |
+| **catalog-service**   | `CatalogMessagesController`                                              | `CatalogService`                                                         | `catalog.dto`                              | `Product`       |
+| **inventory-service** | `InventoryMessagesController`                                            | `InventoryService`                                                       | `inventory.dto`                            | `InventoryItem` |
+| **auth-service**      | `AuthMessagesController`                                                 | `AuthService`, `UsersService`                                            | `auth.dto`                                 | `User`          |
 
 **Tests backend**: Cada microservicio tiene tests unitarios en carpeta dedicada `tests/unit/` (no mezclados con `src/`). E2E en `test/`:
 
