@@ -46,7 +46,7 @@ Con esto se evita comunicacion sincrona innecesaria entre modulos y se valida co
 - Arquitectura por bounded contexts: `auth`, `catalog`, `inventory`, `api-gateway`
 - Comunicacion asincronica por RabbitMQ para eventos de dominio
 - API Gateway como punto HTTP unico para el frontend
-- Persistencia en PostgreSQL (Neon), con enfoque de evolucion progresiva
+- Persistencia en [Neon](https://neon.tech) PostgreSQL (base de datos online `pg-ecommerce`), con enfoque de evolucion progresiva
 - Frontend con React + Vite + TanStack Query + componentes estilo shadcn
 - UI con actualizaciones optimistas para stock y manejo de asincronia
 
@@ -56,7 +56,7 @@ Con esto se evita comunicacion sincrona innecesaria entre modulos y se valida co
 - **TanStack Query**: `useQuery` para listado de productos (cache, `staleTime`), `useMutation` para crear producto y ajustar stock. Actualizaciones optimistas en `onMutate` con rollback en `onError` para una UX fluida sin saltos de pantalla.
 - **Carpeta de types**: Los tipos del frontend estan centralizados en `src/types/` (`product.ts`, `products-page.ts`): `Product`, `ProductForm`, `CreateProductPayload`, `AdjustStockPayload`, `UseProductsPageResult`, etc.
 
-## 4) Arquitectura backend (plan inicial)
+## 4) Arquitectura backend
 
 ```mermaid
 flowchart LR
@@ -129,10 +129,11 @@ Suites ejecutadas y pasando en esta solucion:
 
 App desplegada en [Fly.io](https://fly.io):
 
-| Servicio | URL |
-|----------|-----|
-| **Frontend** | https://aleo-ecom-frontend.fly.dev |
-| **API Gateway (Backend)** | https://aleo-ecom-gateway.fly.dev |
+| Servicio                  | URL                                |
+| ------------------------- | ---------------------------------- |
+| **Frontend**              | https://aleo-ecom-frontend.fly.dev |
+| **API Gateway (Backend)** | https://aleo-ecom-gateway.fly.dev  |
+| **Base de datos**         | Neon PostgreSQL (`pg-ecommerce`)   |
 
 Ejemplos de endpoints del API Gateway:
 
