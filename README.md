@@ -5,7 +5,7 @@ Repositorio monorepo con la solucion completa del challenge:
 - backend base analizado y saneado (`nestjs-ecommerce`)
 - backend evolucionado a microservicios event-driven (`microservices/*`)
 - frontend React con Vite para validacion end-to-end (`react-ecommerce`)
-- infraestructura local de mensajeria (`infra/docker-compose.yml`)
+- infraestructura de mensajeria: RabbitMQ local (`infra/docker-compose.yml`) para desarrollo; [CloudAMQP](https://cloudamqp.com) para produccion (Fly.io)
 
 ## 1) Problemas detectados en el diseno original
 
@@ -44,7 +44,7 @@ Con esto se evita comunicacion sincrona innecesaria entre modulos y se valida co
 ## 3) Decisiones tecnicas relevantes
 
 - Arquitectura por bounded contexts: `auth`, `catalog`, `inventory`, `api-gateway`
-- Comunicacion asincronica por RabbitMQ para eventos de dominio
+- Comunicacion asincronica por RabbitMQ para eventos de dominio (local: docker-compose; produccion: CloudAMQP)
 - API Gateway como punto HTTP unico para el frontend
 - Persistencia en [Neon](https://neon.tech) PostgreSQL (base de datos online `pg-ecommerce`), con enfoque de evolucion progresiva
 - Frontend con React + Vite + TanStack Query + componentes estilo shadcn
