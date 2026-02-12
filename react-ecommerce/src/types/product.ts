@@ -20,6 +20,13 @@ export type CreateProductPayload = {
   isActive?: boolean;
 };
 
+export type UpdateProductPayload = {
+  title?: string;
+  description?: string;
+  price?: number;
+  isActive?: boolean;
+};
+
 export type AdjustStockPayload = {
   productId: string;
   delta: number;

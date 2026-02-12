@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import * as api from './lib/api';
@@ -10,6 +10,8 @@ vi.mock('./lib/api', async () => {
     getProducts: vi.fn(),
     createProduct: vi.fn(),
     adjustStock: vi.fn(),
+    updateProduct: vi.fn(),
+    deleteProduct: vi.fn(),
   };
 });
 
@@ -252,6 +254,103 @@ describe('App', () => {
     await waitFor(() => {
       expect(api.adjustStock).toHaveBeenCalledWith('p-5', -1);
       expect(screen.getByText(/\$20\.00 - Stock:\s*4/)).toBeInTheDocument();
+    });
+  });
+
+  it('opens edit dialog and deletes product from dialog', async () => {
+    vi.mocked(api.getProducts).mockResolvedValue([
+      {
+        id: 'p-delete',
+        title: 'Product To Delete',
+        description: 'Will be removed',
+        price: 15,
+        isActive: true,
+        lastKnownStock: 2,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    ]);
+    vi.mocked(api.deleteProduct).mockResolvedValue();
+
+    renderWithQueryClient();
+
+    await waitFor(() => {
+      expect(screen.getByText('Product To Delete')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Editar Product To Delete' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Editar producto' })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Eliminar/i }));
+
+    await waitFor(() => {
+      expect(api.deleteProduct).toHaveBeenCalled();
+      expect(vi.mocked(api.deleteProduct).mock.calls[0]?.[0]).toBe('p-delete');
+      expect(screen.queryByText('Product To Delete')).not.toBeInTheDocument();
+    });
+  });
+
+  it('opens edit dialog and updates product', async () => {
+    vi.mocked(api.getProducts).mockResolvedValue([
+      {
+        id: 'p-edit',
+        title: 'Product To Edit',
+        description: 'Original',
+        price: 10,
+        isActive: true,
+        lastKnownStock: 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    ]);
+    vi.mocked(api.updateProduct).mockResolvedValue({
+      id: 'p-edit',
+      title: 'Updated Title',
+      description: 'Updated desc',
+      price: 20,
+      isActive: true,
+      lastKnownStock: 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    renderWithQueryClient();
+
+    await waitFor(() => {
+      expect(screen.getByText('Product To Edit')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Editar Product To Edit' }));
+
+    const dialog = await waitFor(() => screen.getByRole('dialog'));
+    expect(dialog).toBeInTheDocument();
+
+    const dialogContent = within(dialog);
+    fireEvent.change(dialogContent.getByPlaceholderText('Titulo'), {
+      target: { value: 'Updated Title' },
+    });
+    fireEvent.change(dialogContent.getByPlaceholderText('Descripcion'), {
+      target: { value: 'Updated desc' },
+    });
+    fireEvent.change(dialogContent.getByPlaceholderText('Precio'), {
+      target: { value: '20' },
+    });
+
+    fireEvent.click(dialogContent.getByRole('button', { name: 'Guardar' }));
+
+    await waitFor(() => {
+      expect(api.updateProduct).toHaveBeenCalledWith(
+        'p-edit',
+        expect.objectContaining({
+          title: 'Updated Title',
+          description: 'Updated desc',
+          price: 20,
+        }),
+      );
     });
   });
 });

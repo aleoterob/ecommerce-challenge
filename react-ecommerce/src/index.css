@@ -19,9 +19,16 @@
     @apply border-gray-200;
   }
 
-  body {
-    @apply bg-slate-100 text-slate-900 antialiased;
+  html,
+  body,
+  #root {
+    height: 100%;
     margin: 0;
     min-width: 320px;
+  }
+
+  body {
+    @apply bg-slate-100 text-slate-900 antialiased;
+    overflow: hidden;
   }
 }
