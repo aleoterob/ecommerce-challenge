@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import type { Product } from '../types/product';
 
 const ACTIVE_BADGE_CLASS_NAME =
-  'border-[oklch(0.606_0.25_292.717/0.5)] bg-[oklch(0.606_0.25_292.717)] text-[oklch(1_0_0)] dark:border-[oklch(0.606_0.25_292.717/0.5)] dark:bg-[oklch(0.606_0.25_292.717)] dark:text-[oklch(0.985_0_0)]';
+  'border-[var(--accent-border)] bg-[var(--accent)] text-[var(--accent-foreground)] dark:border-[var(--accent-border)] dark:bg-[var(--accent)] dark:text-[var(--accent-foreground-dark)]';
 
 export type CatalogProps = {
   products: Product[];
@@ -42,7 +42,7 @@ export function Catalog({
               className="rounded-md border border-slate-200 bg-slate-50 p-3"
               key={product.id}
             >
-              <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="mb-2 flex items-start justify-between gap-2">
                 <div>
                   <h2 className="font-semibold">{product.title}</h2>
                   {product.description ? (

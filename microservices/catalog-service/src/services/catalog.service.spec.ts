@@ -59,4 +59,147 @@ describe('CatalogService', () => {
       }),
     );
   });
+
+  it('deletes a product by id', async () => {
+    const deleteMock = jest.fn().mockResolvedValue({ affected: 1 });
+    const sendMock = jest.fn().mockReturnValue(of(undefined));
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        CatalogService,
+        {
+          provide: getRepositoryToken(Product),
+          useValue: {
+            create: jest.fn(),
+            save: jest.fn(),
+            find: jest.fn(),
+            findOne: jest.fn(),
+            delete: deleteMock,
+          },
+        },
+        {
+          provide: INVENTORY_EVENTS_CLIENT,
+          useValue: { emit: jest.fn(), send: sendMock },
+        },
+      ],
+    }).compile();
+
+    const service = moduleRef.get(CatalogService);
+    await service.deleteProduct('p-to-delete');
+
+    expect(sendMock).toHaveBeenCalledWith(
+      'inventory.delete-by-product',
+      { productId: 'p-to-delete' },
+    );
+    expect(deleteMock).toHaveBeenCalledWith({ id: 'p-to-delete' });
+  });
+
+  it('throws when product does not exist', async () => {
+    const deleteMock = jest.fn().mockResolvedValue({ affected: 0 });
+    const sendMock = jest.fn().mockReturnValue(of(undefined));
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        CatalogService,
+        {
+          provide: getRepositoryToken(Product),
+          useValue: {
+            create: jest.fn(),
+            save: jest.fn(),
+            find: jest.fn(),
+            findOne: jest.fn(),
+            delete: deleteMock,
+          },
+        },
+        {
+          provide: INVENTORY_EVENTS_CLIENT,
+          useValue: { emit: jest.fn(), send: sendMock },
+        },
+      ],
+    }).compile();
+
+    const service = moduleRef.get(CatalogService);
+
+    await expect(service.deleteProduct('non-existent')).rejects.toThrow(
+      'Product not found',
+    );
+  });
+
+  it('updates a product by id', async () => {
+    const existingProduct = {
+      id: 'p-1',
+      title: 'Original',
+      description: 'Original desc',
+      price: '10.00',
+      isActive: true,
+      lastKnownStock: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as Product;
+    const saveMock = jest.fn().mockImplementation((entity: Product) => {
+      return Promise.resolve({ ...existingProduct, ...entity });
+    });
+    const findOneMock = jest.fn().mockResolvedValue(existingProduct);
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        CatalogService,
+        {
+          provide: getRepositoryToken(Product),
+          useValue: {
+            create: jest.fn(),
+            save: saveMock,
+            find: jest.fn(),
+            findOne: findOneMock,
+          },
+        },
+        {
+          provide: INVENTORY_EVENTS_CLIENT,
+          useValue: { emit: jest.fn() },
+        },
+      ],
+    }).compile();
+
+    const service = moduleRef.get(CatalogService);
+    const result = await service.updateProduct('p-1', {
+      title: 'Updated Title',
+      description: 'Updated desc',
+      price: 25,
+    });
+
+    expect(findOneMock).toHaveBeenCalledWith({ where: { id: 'p-1' } });
+    expect(saveMock).toHaveBeenCalled();
+    expect(result.title).toBe('Updated Title');
+    expect(result.description).toBe('Updated desc');
+    expect(result.price).toBe('25.00');
+  });
+
+  it('updateProduct throws NotFoundException when product does not exist', async () => {
+    const findOneMock = jest.fn().mockResolvedValue(null);
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        CatalogService,
+        {
+          provide: getRepositoryToken(Product),
+          useValue: {
+            create: jest.fn(),
+            save: jest.fn(),
+            find: jest.fn(),
+            findOne: findOneMock,
+          },
+        },
+        {
+          provide: INVENTORY_EVENTS_CLIENT,
+          useValue: { emit: jest.fn() },
+        },
+      ],
+    }).compile();
+
+    const service = moduleRef.get(CatalogService);
+
+    await expect(
+      service.updateProduct('non-existent', { title: 'New Title' }),
+    ).rejects.toThrow('Product not found');
+  });
 });

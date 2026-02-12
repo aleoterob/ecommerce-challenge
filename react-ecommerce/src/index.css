@@ -13,6 +13,10 @@
     --border: 214.3 31.8% 91.4%;
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
+    --accent: oklch(0.606 0.25 292.717);
+    --accent-border: oklch(0.606 0.25 292.717 / 0.5);
+    --accent-foreground: oklch(1 0 0);
+    --accent-foreground-dark: oklch(0.985 0 0);
   }
 
   * {

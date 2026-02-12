@@ -12,7 +12,7 @@ import { Trash2 } from 'lucide-react';
 import type { UseProductDialogResult } from '../types/product-dialog';
 
 const UPDATE_BUTTON_CLASS_NAME =
-  'bg-[oklch(0.606_0.25_292.717)] text-[oklch(1_0_0)] hover:opacity-90 dark:bg-[oklch(0.606_0.25_292.717)] dark:text-[oklch(0.985_0_0)]';
+  'bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 dark:bg-[var(--accent)] dark:text-[var(--accent-foreground-dark)]';
 
 type ProductDialogProps = UseProductDialogResult;
 

@@ -4,7 +4,7 @@ import { Input } from './ui/input';
 import type { ProductForm } from '../types/products-page';
 
 const CREATE_BUTTON_CLASS_NAME =
-  'w-full bg-[oklch(0.606_0.25_292.717)] text-[oklch(1_0_0)] hover:bg-[oklch(0.606_0.25_292.717)] hover:opacity-90 dark:bg-[oklch(0.606_0.25_292.717)] dark:text-[oklch(0.985_0_0)] dark:hover:bg-[oklch(0.606_0.25_292.717)]';
+  'w-full bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 dark:bg-[var(--accent)] dark:text-[var(--accent-foreground-dark)] dark:hover:opacity-90';
 
 export type CreateProductProps = {
   form: ProductForm;
