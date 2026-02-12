@@ -50,6 +50,12 @@ Con esto se evita comunicacion sincrona innecesaria entre modulos y se valida co
 - Frontend con React + Vite + TanStack Query + componentes estilo shadcn
 - UI con actualizaciones optimistas para stock y manejo de asincronia
 
+### 3.1) Frontend (react-ecommerce)
+
+- **Custom hooks**: La logica de la pagina de productos (`useProductsPage`) esta encapsulada en `src/hooks/use-products-page.ts`. El componente `App` es puramente presentacional y consume datos, estado y handlers del hook.
+- **TanStack Query**: `useQuery` para listado de productos (cache, `staleTime`), `useMutation` para crear producto y ajustar stock. Actualizaciones optimistas en `onMutate` con rollback en `onError` para una UX fluida sin saltos de pantalla.
+- **Carpeta de types**: Los tipos del frontend estan centralizados en `src/types/` (`product.ts`, `products-page.ts`): `Product`, `ProductForm`, `CreateProductPayload`, `AdjustStockPayload`, `UseProductsPageResult`, etc.
+
 ## 4) Arquitectura backend (plan inicial)
 
 ```mermaid
@@ -121,12 +127,20 @@ Suites ejecutadas y pasando en esta solucion:
 
 ## 7) URLs publicas de acceso
 
-Pendiente de publicacion final:
+App desplegada en [Fly.io](https://fly.io):
 
-- Backend (API Gateway): _por definir_
-- Frontend: _por definir_
+| Servicio | URL |
+|----------|-----|
+| **Frontend** | https://aleo-ecom-frontend.fly.dev |
+| **API Gateway (Backend)** | https://aleo-ecom-gateway.fly.dev |
 
-URLs locales para validacion:
+Ejemplos de endpoints del API Gateway:
+
+- `GET /products` — listado de productos
+- `POST /products` — crear producto
+- `PATCH /inventory/adjust` — ajustar stock
+
+URLs locales para desarrollo:
 
 - Frontend: `http://localhost:5173`
 - API Gateway: `http://localhost:3010`
