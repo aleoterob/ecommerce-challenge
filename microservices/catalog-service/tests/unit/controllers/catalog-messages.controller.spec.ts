@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RmqContext } from '@nestjs/microservices';
-import { CatalogMessagesController } from './catalog-messages.controller';
-import { CatalogService } from '../services/catalog.service';
-import { Product } from '../entities/product.entity';
+import { CatalogMessagesController } from '../../../src/controllers/catalog-messages.controller';
+import { CatalogService } from '../../../src/services/catalog.service';
+import { Product } from '../../../src/entities/product.entity';
 
 describe('CatalogMessagesController', () => {
   let controller: CatalogMessagesController;

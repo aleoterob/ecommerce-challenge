@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { of } from 'rxjs';
-import { Product } from '../entities/product.entity';
-import { INVENTORY_EVENTS_CLIENT } from '../messaging/rmq.constants';
-import { CatalogService } from './catalog.service';
+import { Product } from '../../../src/entities/product.entity';
+import { INVENTORY_EVENTS_CLIENT } from '../../../src/messaging/rmq.constants';
+import { CatalogService } from '../../../src/services/catalog.service';
 
 describe('CatalogService', () => {
   it('listProducts returns all products ordered by createdAt desc', async () => {

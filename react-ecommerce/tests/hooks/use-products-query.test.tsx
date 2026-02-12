@@ -1,11 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useProductsQuery } from './use-products-query';
-import * as api from '../lib/api';
+import { useProductsQuery } from '@/hooks/use-products-query';
+import * as api from '@/lib/api';
 
-vi.mock('../lib/api', async () => {
-  const actual = await vi.importActual<typeof import('../lib/api')>('../lib/api');
+vi.mock('@/lib/api', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/api')>('@/lib/api');
   return { ...actual, getProducts: vi.fn() };
 });
 

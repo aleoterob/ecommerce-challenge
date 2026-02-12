@@ -47,22 +47,45 @@ Con esto se evita comunicacion sincrona innecesaria entre modulos y se valida co
 - Comunicacion asincronica por RabbitMQ para eventos de dominio (local: docker-compose; produccion: CloudAMQP)
 - API Gateway como punto HTTP unico para el frontend
 - Persistencia en [Neon](https://neon.tech) PostgreSQL (base de datos online `pg-ecommerce`), con enfoque de evolucion progresiva
-- Frontend con React + Vite + TanStack Query + componentes estilo shadcn
+- Frontend con React + Vite + TanStack Query
 - UI con actualizaciones optimistas para stock y manejo de asincronia
 
 ### 3.1) Frontend (react-ecommerce)
 
-- **Custom hooks**: La logica de la pagina de productos (`useProductsPage`) esta encapsulada en `src/hooks/`. El componente `App` es puramente presentacional y consume datos, estado y handlers de los hooks. Hooks implementados:
-  - `use-products-query.ts` — listado de productos con TanStack Query (`useQuery`), cache y `totalStock` derivado
-  - `use-create-product.ts` — creacion de productos con stock inicial opcional
-  - `use-adjust-stock.ts` — ajuste de stock (+1/-1) con actualizacion optimista y rollback en error
-  - `use-product-dialog-state.ts` — estado del modal de edicion (abrir/cerrar, formulario, mensajes de error)
-  - `use-product-dialog-mutations.ts` — mutaciones del modal: actualizar producto, eliminar, ajustar stock
-  - `use-product-dialog.ts` — composicion de estado y mutaciones del modal de edicion
-  - `use-products-page.ts` — orquestador: compone `useProductsQuery`, `useCreateProduct`, `useAdjustStock` y expone la API de la pagina
-- **TanStack Query**: `useQuery` para listado de productos (cache, `staleTime`), `useMutation` para crear, actualizar, eliminar y ajustar stock. Actualizaciones optimistas en `onMutate` con rollback en `onError` para una UX fluida sin saltos de pantalla.
-- **Componentes**: `CreateProduct` (formulario de alta), `Catalog` (listado con stock total y badges Activo/Inactivo), `ProductDialog` (modal de edicion, actualizacion de stock y eliminacion).
-- **Carpeta de types**: Los tipos del frontend estan centralizados en `src/types/` (`product.ts`, `products-page.ts`, `product-dialog.ts`): `Product`, `ProductForm`, `ProductDialogForm`, `CreateProductPayload`, `UpdateProductPayload`, `AdjustStockPayload`, `UseProductsPageResult`, `UseProductDialogResult`, etc.
+**Estructura de carpetas:**
+
+```
+react-ecommerce/
+├── src/
+│   ├── components/
+│   │   ├── Catalog.tsx          — listado de productos, stock total, badges Activo/Inactivo, botón Editar
+│   │   ├── CreateProduct.tsx    — formulario de alta de producto
+│   │   ├── ProductDialog.tsx    — modal de edición, actualización de stock y eliminación
+│   │   └── ui/
+│   │       ├── badge.tsx
+│   │       ├── button.tsx
+│   │       ├── button-variants.ts
+│   │       ├── card.tsx
+│   │       ├── dialog.tsx
+│   │       ├── input.tsx
+│   │       └── spinner.tsx
+│   ├── hooks/
+│   ├── lib/
+│   ├── types/
+│   └── App.tsx
+└── tests/                      — tests en carpeta dedicada
+    ├── setup.ts
+    ├── App.test.tsx
+    ├── components/
+    ├── hooks/
+```
+
+- **Componentes**: `Catalog` (listado con stock total y badges Activo/Inactivo), `CreateProduct` (formulario de alta), `ProductDialog` (modal de edición). Componentes UI: `Badge`, `Button`, `Card`, `Dialog`, `Input`, `Spinner`, `button-variants`.
+- **Custom hooks** (`src/hooks/`): `use-products-query.ts`, `use-create-product.ts`, `use-adjust-stock.ts`, `use-product-dialog-state.ts`, `use-product-dialog-mutations.ts`, `use-product-dialog.ts`, `use-products-page.ts`.
+- **Lib** (`src/lib/`): `api.ts` (cliente HTTP), `utils.ts`.
+- **Types** (`src/types/`): `product.ts`, `products-page.ts`, `product-dialog.ts`.
+- **Tests**: Carpeta `tests/` con `App.test.tsx`, `tests/components/`, `tests/hooks/`, `tests/setup.ts`. Vitest configurado con `include: ['tests/**/*.{test,spec}.{ts,tsx}']`.
+- **TanStack Query**: `useQuery` para listado, `useMutation` para CRUD. Actualizaciones optimistas con rollback en error.
 
 ## 4) Arquitectura backend
 
@@ -83,6 +106,27 @@ flowchart TB
 ```
 
 El API Gateway envia solicitudes (RPC) a los microservicios via RabbitMQ. Los eventos de dominio fluyen asincronamente: `product.created` (Catalog → Inventory) para inicializar inventario; `inventory.updated` (Inventory → Catalog) para actualizar `lastKnownStock`.
+
+**Estructura backend por servicio:**
+
+| Servicio | Controllers | Services | DTOs | Entities |
+|----------|-------------|----------|------|----------|
+| **api-gateway** | `CatalogHttpController`, `AuthHttpController`, `InventoryHttpController` | `CatalogGatewayService`, `AuthGatewayService`, `InventoryGatewayService` | `catalog.dto`, `auth.dto`, `inventory.dto` | — |
+| **catalog-service** | `CatalogMessagesController` | `CatalogService` | `catalog.dto` | `Product` |
+| **inventory-service** | `InventoryMessagesController` | `InventoryService` | `inventory.dto` | `InventoryItem` |
+| **auth-service** | `AuthMessagesController` | `AuthService`, `UsersService` | `auth.dto` | `User` |
+
+**Tests backend**: Cada microservicio tiene tests unitarios en carpeta dedicada `tests/unit/` (no mezclados con `src/`). E2E en `test/`:
+
+```
+microservices/<servicio>/
+├── src/
+└── tests/
+    └── unit/
+        ├── app.controller.spec.ts
+        ├── controllers/
+        └── services/
+```
 
 ## 5) Como levantar el proyecto
 
@@ -134,9 +178,11 @@ npm run dev
 Suites ejecutadas y pasando en esta solucion:
 
 - monolito `nestjs-ecommerce`: unit + e2e
-- `microservices/*`: unit + e2e por servicio (catalog-service, api-gateway, inventory-service, auth-service)
-- `react-ecommerce`: `type-check` + tests + lint
+- `microservices/*`: unit (`tests/unit/`) + e2e (`test/`) por servicio (catalog-service, api-gateway, inventory-service, auth-service)
+- `react-ecommerce`: `type-check` + tests (`tests/`) + lint
 - builds de backend y frontend
+
+Los tests estan en carpetas dedicadas: `react-ecommerce/tests/` (Vitest) y `microservices/<servicio>/tests/unit/` (Jest), sin mezclar con componentes ni servicios.
 
 ## 7) URLs publicas de acceso
 

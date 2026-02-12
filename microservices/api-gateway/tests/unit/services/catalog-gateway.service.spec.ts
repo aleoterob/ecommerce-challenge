@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { of, throwError } from 'rxjs';
 import { HttpException } from '@nestjs/common';
-import { CatalogGatewayService } from './catalog-gateway.service';
-import { CATALOG_SERVICE_CLIENT } from '../messaging/rmq.constants';
+import { CatalogGatewayService } from '../../../src/services/catalog-gateway.service';
+import { CATALOG_SERVICE_CLIENT } from '../../../src/messaging/rmq.constants';
 
 const mockProductDto = {
   id: 'p-1',

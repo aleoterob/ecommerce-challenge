@@ -1,11 +1,11 @@
 import { renderHook, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useProductDialogMutations } from './use-product-dialog-mutations';
-import * as api from '../lib/api';
+import { useProductDialogMutations } from '@/hooks/use-product-dialog-mutations';
+import * as api from '@/lib/api';
 
-vi.mock('../lib/api', async () => {
-  const actual = await vi.importActual<typeof import('../lib/api')>('../lib/api');
+vi.mock('@/lib/api', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/api')>('@/lib/api');
   return {
     ...actual,
     updateProduct: vi.fn(),

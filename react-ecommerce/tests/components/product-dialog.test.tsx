@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { ProductDialog } from './product-dialog';
+import { ProductDialog } from '@/components/product-dialog';
 
 const mockProduct = {
   id: 'p-1',
@@ -21,6 +21,7 @@ const defaultProps = {
   isUpdating: false,
   isDeleting: false,
   isUpdatingStock: false,
+  openDialog: vi.fn(),
   closeDialog: vi.fn(),
   setFormTitle: vi.fn(),
   setFormDescription: vi.fn(),

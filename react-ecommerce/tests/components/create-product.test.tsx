@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { CreateProduct } from './create-product';
+import { CreateProduct } from '@/components/create-product';
 
 const defaultForm = {
   title: '',

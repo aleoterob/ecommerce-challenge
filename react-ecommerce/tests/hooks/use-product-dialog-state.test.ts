@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { useProductDialogState } from './use-product-dialog-state';
+import { useProductDialogState } from '@/hooks/use-product-dialog-state';
 
 const mockProduct = {
   id: 'p-1',

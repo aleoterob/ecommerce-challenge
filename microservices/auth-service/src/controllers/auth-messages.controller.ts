@@ -41,7 +41,7 @@ export class AuthMessagesController {
   }
 
   private ack(context: RmqContext): void {
-    const channel = context.getChannelRef();
+    const channel = context.getChannelRef() as { ack: (msg: unknown) => void };
     const originalMessage = context.getMessage();
     channel.ack(originalMessage);
   }

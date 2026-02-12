@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { CatalogHttpController } from './catalog-http.controller';
-import { CatalogGatewayService } from '../services/catalog-gateway.service';
+import { CatalogHttpController } from '../../../src/controllers/catalog-http.controller';
+import { CatalogGatewayService } from '../../../src/services/catalog-gateway.service';
 
 const mockProductDto = {
   id: 'p-1',

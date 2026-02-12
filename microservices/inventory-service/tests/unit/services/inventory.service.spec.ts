@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { of } from 'rxjs';
-import { InventoryItem } from '../entities/inventory-item.entity';
-import { CATALOG_EVENTS_CLIENT } from '../messaging/rmq.constants';
-import { InventoryService } from './inventory.service';
+import { InventoryItem } from '../../../src/entities/inventory-item.entity';
+import { CATALOG_EVENTS_CLIENT } from '../../../src/messaging/rmq.constants';
+import { InventoryService } from '../../../src/services/inventory.service';
 
 describe('InventoryService', () => {
   it('adjusts stock and emits inventory.updated', async () => {
@@ -16,7 +16,7 @@ describe('InventoryService', () => {
     const upsert = jest.fn().mockResolvedValue(undefined);
     const save = jest
       .fn()
-      .mockImplementation(async (item: InventoryItem) => item);
+      .mockImplementation((item: InventoryItem) => Promise.resolve(item));
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -43,10 +43,11 @@ describe('InventoryService', () => {
   });
 
   it('creates inventory item on first stock adjustment', async () => {
-    const save = jest.fn().mockImplementation(async (item: InventoryItem) => ({
-      ...item,
-      id: 'i-created',
-    }));
+    const save = jest
+      .fn()
+      .mockImplementation((item: InventoryItem) =>
+        Promise.resolve({ ...item, id: 'i-created' }),
+      );
     const emit = jest.fn().mockReturnValue(of(undefined));
     const findOne = jest.fn().mockResolvedValue({
       id: 'i-created',

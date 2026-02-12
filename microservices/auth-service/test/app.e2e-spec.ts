@@ -1,3 +1,4 @@
+import type { Server } from 'http';
 import { Controller, Get, INestApplication, Module } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
@@ -32,7 +33,7 @@ describe('AppController (e2e)', () => {
   });
 
   it('/health (GET)', () => {
-    return request(app.getHttpServer())
+    return request(app.getHttpServer() as Server)
       .get('/health')
       .expect(200)
       .expect({ status: 'ok' });

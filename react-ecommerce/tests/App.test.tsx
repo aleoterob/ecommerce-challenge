@@ -1,10 +1,10 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import App from './App';
-import * as api from './lib/api';
+import App from '@/App';
+import * as api from '@/lib/api';
 
-vi.mock('./lib/api', async () => {
-  const actual = await vi.importActual<typeof import('./lib/api')>('./lib/api');
+vi.mock('@/lib/api', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/api')>('@/lib/api');
   return {
     ...actual,
     getProducts: vi.fn(),

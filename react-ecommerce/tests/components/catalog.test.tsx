@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Catalog } from './catalog';
-import type { Product } from '../types/product';
+import { Catalog } from '@/components/catalog';
+import type { Product } from '@/types/product';
 
 const mockProduct: Product = {
   id: 'p-1',
