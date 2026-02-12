@@ -80,7 +80,8 @@ services:
       - key: INVENTORY_DATABASE_URL
         sync: false
 
-  - type: static
+  - type: web
+    env: static
     name: ecommerce-frontend
     rootDir: react-ecommerce
     buildCommand: npm ci && npm run build
