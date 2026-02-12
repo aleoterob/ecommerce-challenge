@@ -1,0 +1,11 @@
+app = "aleo-ecom-catalog"
+primary_region = "gru"
+
+[env]
+  CATALOG_QUEUE = "catalog_queue"
+  INVENTORY_QUEUE = "inventory_queue"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

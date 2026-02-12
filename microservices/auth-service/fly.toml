@@ -1,0 +1,10 @@
+app = "aleo-ecom-auth"
+primary_region = "gru"
+
+[env]
+  AUTH_QUEUE = "auth_queue"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
