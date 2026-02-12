@@ -69,6 +69,10 @@ describe('App', () => {
 
     renderWithQueryClient();
 
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('Titulo')).toBeInTheDocument();
+    });
+
     fireEvent.change(screen.getByPlaceholderText('Titulo'), {
       target: { value: 'Created Product' },
     });
@@ -109,6 +113,10 @@ describe('App', () => {
     });
 
     renderWithQueryClient();
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('Titulo')).toBeInTheDocument();
+    });
 
     fireEvent.change(screen.getByPlaceholderText('Titulo'), {
       target: { value: 'Created With Stock' },

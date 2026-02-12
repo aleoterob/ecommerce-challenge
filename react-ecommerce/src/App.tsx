@@ -1,9 +1,10 @@
 import { useProductsPage } from './hooks/use-products-page';
-import { Loader2, PackageSearch } from 'lucide-react';
+import { PackageSearch } from 'lucide-react';
 import { Badge } from './components/ui/badge';
 import { Button } from './components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';
 import { Input } from './components/ui/input';
+import { Spinner } from './components/ui/spinner';
 
 const ACTIVE_BADGE_CLASS_NAME =
   'border-[oklch(0.606_0.25_292.717/0.5)] bg-[oklch(0.606_0.25_292.717)] text-[oklch(1_0_0)] dark:border-[oklch(0.606_0.25_292.717/0.5)] dark:bg-[oklch(0.606_0.25_292.717)] dark:text-[oklch(0.985_0_0)]';
@@ -32,6 +33,14 @@ function App(): React.ReactElement {
   ): Promise<void> {
     event.preventDefault();
     await submitCreateProduct();
+  }
+
+  if (isInitialLoading) {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center">
+        <Spinner className="size-8 text-slate-600" />
+      </div>
+    );
   }
 
   return (
@@ -100,14 +109,7 @@ function App(): React.ReactElement {
             <CardTitle>Catalogo</CardTitle>
           </CardHeader>
           <CardContent>
-            {isInitialLoading ? (
-              <div className="flex items-center gap-2 text-slate-600">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Cargando productos...
-              </div>
-            ) : null}
-
-            {!isInitialLoading && products.length === 0 ? (
+            {products.length === 0 ? (
               <div className="flex items-center gap-2 text-slate-500">
                 <PackageSearch className="h-4 w-4" />
                 Sin productos cargados.
