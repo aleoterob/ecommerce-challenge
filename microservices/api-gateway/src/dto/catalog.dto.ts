@@ -17,6 +17,25 @@ export class CreateProductDto {
   isActive?: boolean;
 }
 
+export class UpdateProductDto {
+  @IsString()
+  @IsOptional()
+  title?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  price?: number;
+
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
+}
+
 export class ProductDto {
   id!: string;
   title!: string;

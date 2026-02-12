@@ -6,7 +6,7 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { CreateProductDto } from '../dto/catalog.dto';
+import { CreateProductDto, UpdateProductDto } from '../dto/catalog.dto';
 import { Product } from '../entities/product.entity';
 import { INVENTORY_UPDATED_EVENT } from '../messaging/rmq.constants';
 import { CatalogService } from '../services/catalog.service';
@@ -38,6 +38,26 @@ export class CatalogMessagesController {
   ): Promise<Product> {
     this.ack(context);
     return this.catalogService.getProduct(payload.productId);
+  }
+
+  @MessagePattern('catalog.update-product')
+  async updateProduct(
+    @Payload() payload: { productId: string } & UpdateProductDto,
+    @Ctx() context: RmqContext,
+  ): Promise<Product> {
+    this.ack(context);
+    const { productId, ...dto } = payload;
+    return this.catalogService.updateProduct(productId, dto);
+  }
+
+  @MessagePattern('catalog.delete-product')
+  async deleteProduct(
+    @Payload() payload: { productId: string },
+    @Ctx() context: RmqContext,
+  ): Promise<{ deleted: boolean }> {
+    this.ack(context);
+    await this.catalogService.deleteProduct(payload.productId);
+    return { deleted: true };
   }
 
   @EventPattern(INVENTORY_UPDATED_EVENT)

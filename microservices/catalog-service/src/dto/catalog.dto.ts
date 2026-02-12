@@ -18,3 +18,23 @@ export class CreateProductDto {
   @IsOptional()
   isActive?: boolean;
 }
+
+export class UpdateProductDto {
+  @IsString()
+  @IsOptional()
+  title?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  price?: number;
+
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
+}

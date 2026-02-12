@@ -9,5 +9,7 @@ export const AUTH_PROFILE_PATTERN = 'auth.profile';
 export const CATALOG_CREATE_PRODUCT_PATTERN = 'catalog.create-product';
 export const CATALOG_LIST_PRODUCTS_PATTERN = 'catalog.list-products';
 export const CATALOG_GET_PRODUCT_PATTERN = 'catalog.get-product';
+export const CATALOG_UPDATE_PRODUCT_PATTERN = 'catalog.update-product';
+export const CATALOG_DELETE_PRODUCT_PATTERN = 'catalog.delete-product';
 
 export const INVENTORY_ADJUST_STOCK_PATTERN = 'inventory.adjust-stock';

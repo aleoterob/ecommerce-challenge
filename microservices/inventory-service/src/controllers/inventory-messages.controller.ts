@@ -7,7 +7,10 @@ import {
   RmqContext,
 } from '@nestjs/microservices';
 import { AdjustStockDto } from '../dto/inventory.dto';
-import { PRODUCT_CREATED_EVENT } from '../messaging/rmq.constants';
+import {
+  INVENTORY_DELETE_BY_PRODUCT_PATTERN,
+  PRODUCT_CREATED_EVENT,
+} from '../messaging/rmq.constants';
 import { InventoryService } from '../services/inventory.service';
 
 @Controller()
@@ -22,6 +25,16 @@ export class InventoryMessagesController {
   ): Promise<void> {
     this.ack(context);
     await this.inventoryService.createInventoryIfMissing(payload.productId);
+  }
+
+  @MessagePattern(INVENTORY_DELETE_BY_PRODUCT_PATTERN)
+  async deleteByProduct(
+    @Payload() payload: { productId: string },
+    @Ctx() context: RmqContext,
+  ): Promise<{ deleted: boolean }> {
+    this.ack(context);
+    await this.inventoryService.deleteByProductId(payload.productId);
+    return { deleted: true };
   }
 
   @MessagePattern('inventory.adjust-stock')

@@ -61,4 +61,8 @@ export class InventoryService {
 
     return { productId, quantity };
   }
+
+  async deleteByProductId(productId: string): Promise<void> {
+    await this.inventoryRepository.delete({ productId });
+  }
 }
